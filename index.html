@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SigeonOS Manual</title>
+<style>
+
+:root{
+  --sky-top: #1b5fa8;
+  --sky-mid: #3a86c8;
+  --sky-glow: #bfe3ff;
+  --deep: #0d3a66;
+  --deep-soft: #1c5f9e;
+  --glass-blue: #4fb3f0;
+  --aero-highlight: #eaf7ff;
+  --taskbar: #1c3f66;
+  --ink: #0d2b47;
+  --ink-muted: #4c7292;
+  --sans: 'Segoe UI', 'Segoe UI Historic', Tahoma, Verdana, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'Consolas', 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+  --radius: 22px;
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+
+body{
+  margin: 0;
+  font-family: var(--sans);
+  background: var(--sky-mid);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a{ color: inherit; }
+
+.wrap{
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.atmosphere{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 15%, var(--sky-glow) 0%, var(--sky-mid) 45%, var(--sky-top) 78%, #0c3866 100%);
+  overflow: hidden;
+}
+
+.atmosphere .ray{
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  background: conic-gradient(from 200deg at 50% 0%, rgba(255,255,255,0.16), rgba(255,255,255,0) 12%, rgba(255,255,255,0) 88%, rgba(255,255,255,0.16));
+  transform: translateX(-50%);
+  opacity: 0.7;
+}
+
+.atmosphere .bokeh{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.35;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.1) 55%, rgba(255,255,255,0) 72%);
+}
+
+.atmosphere .b1{ width: 260px; height: 260px; top: 4%; left: 10%; }
+.atmosphere .b2{ width: 140px; height: 140px; top: 18%; left: 74%; opacity:0.25;}
+.atmosphere .b3{ width: 380px; height: 380px; top: 58%; left: -90px; opacity:0.2;}
+.atmosphere .b4{ width: 180px; height: 180px; top: 70%; left: 86%; opacity:0.28;}
+
+.atmosphere .haze{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0) 35%, rgba(4,26,49,0.25) 100%);
+}
+
+nav{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  padding: 10px 16px;
+}
+
+.dock{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 8px 0 6px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(26,58,92,0.92) 0%, rgba(13,34,58,0.9) 100%);
+  border: 1px solid rgba(130,190,240,0.35);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.15) inset,
+    0 10px 26px rgba(3,15,28,0.45),
+    0 0 0 1px rgba(0,0,0,0.2);
+  backdrop-filter: blur(14px) saturate(160%);
+}
+
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  color: #eaf5ff;
+  letter-spacing: 0;
+  padding: 6px 14px 6px 6px;
+  border-radius: 6px;
+}
+
+.brand .orb{
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: inline-block;
+  background:
+    radial-gradient(circle at 32% 24%, #ffffff 0%, #bfe6ff 14%, var(--glass-blue) 46%, #1c6fb0 78%, #0d3a66 100%);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(255,255,255,0.35) inset,
+    0 -6px 10px rgba(0,0,0,0.15) inset;
+}
+
+.navlinks{
+  display: flex;
+  gap: 2px;
+  list-style: none;
+  margin: 0; padding: 0;
+}
+
+.navlinks a{
+  text-decoration: none;
+  font-size: 13px;
+  color: #cfe6fb;
+  padding: 9px 13px;
+  border-radius: 4px;
+  transition: background .15s ease, color .15s ease;
+}
+.navlinks a:hover{
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.2) inset;
+}
+
+.nav-cta{
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(180deg, #7fd0ff 0%, #2f96e0 45%, #1668ad 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.65) inset,
+    0 1px 1px rgba(255,255,255,0.4) inset,
+    0 4px 10px rgba(10,40,70,0.5);
+  border: 1px solid rgba(6,40,70,0.6);
+}
+
+header.hero{
+  padding: 64px 0 56px;
+}
+
+.hero-copy{
+  max-width: 640px;
+  margin: 0 auto 46px;
+  text-align: center;
+}
+
+.eyebrow-plain{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #eaf5ff;
+  margin: 0 0 18px;
+  padding: 6px 14px 6px 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.08));
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 6px 14px rgba(3,15,28,0.25);
+  backdrop-filter: blur(6px);
+}
+
+.eyebrow-plain .pip{
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #d4f3ff, var(--glass-blue) 60%, #1668ad);
+  box-shadow: 0 0 0 3px rgba(79,179,240,0.3);
+}
+
+.hero h1{
+  font-size: clamp(34px, 5.2vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin: 0 0 20px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(2,12,24,0.45);
+}
+
+.hero p.lead{
+  font-size: 17px;
+  color: rgba(234,245,255,0.85);
+  margin: 0 auto 30px;
+  max-width: 500px;
+}
+
+.hero-actions{
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.btn-primary{
+  color: #ffffff;
+  background: linear-gradient(180deg, #8ad8ff 0%, #2f96e0 45%, #14508a 100%);
+  border-color: rgba(6,40,70,0.6);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.75) inset,
+    0 2px 3px rgba(255,255,255,0.4) inset,
+    0 8px 18px rgba(3,15,28,0.4);
+}
+
+.btn-primary:hover{ filter: brightness(1.06); }
+
+.btn-secondary{
+  color: #eaf5ff;
+  background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06));
+  border-color: rgba(255,255,255,0.4);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.3) inset,
+    0 6px 16px rgba(3,15,28,0.25);
+  backdrop-filter: blur(6px);
+}
+
+.viewer{
+  max-width: 880px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(15,55,95,0.5);
+  background: linear-gradient(180deg, rgba(210,235,255,0.55), rgba(210,235,255,0.25));
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.6) inset,
+    0 30px 70px rgba(2,12,24,0.45),
+    0 6px 18px rgba(2,12,24,0.3);
+  backdrop-filter: blur(14px) saturate(180%);
+}
+
+.viewer-chrome{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px 10px 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(200,230,255,0.35) 45%, rgba(150,200,240,0.25) 100%);
+  border-bottom: 1px solid rgba(15,55,95,0.25);
+}
+
+.viewer-chrome .traffic{ display: flex; gap: 6px; }
+
+.viewer-chrome .traffic span{
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 1px 1px rgba(0,0,0,0.15);
+}
+.viewer-chrome .traffic span:nth-child(1){ background: linear-gradient(180deg, #ffd27a, #e8a12c); }
+.viewer-chrome .traffic span:nth-child(2){ background: linear-gradient(180deg, #ffe08a, #d9b02a); }
+.viewer-chrome .traffic span:nth-child(3){ background: linear-gradient(180deg, #9adf88, #4fae4a); }
+
+.viewer-chrome .title{
+  flex: 1;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--deep);
+  font-weight: 600;
+}
+
+.viewer-body{
+  position: relative;
+  overflow: hidden;
+  background: #0b1a26;
+  padding: 26px 30px 30px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.75;
+  color: #cfe8ff;
+  min-height: 340px;
+}
+
+.viewer-body .term-head{
+  color: #5f88a5;
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(120,170,210,0.18);
+}
+
+.viewer-body .term-line{ white-space: pre-wrap; }
+.viewer-body .prompt{ color: #4fb3f0; font-weight: 700; }
+.viewer-body .cmd{ color: #ffffff; }
+.viewer-body .out{ color: #7ea9c8; }
+.viewer-body .ok{ color: #7ee787; }
+.viewer-body .err{ color: #ff8a7a; }
+.viewer-body .cursor{
+  display: inline-block;
+  width: 8px; height: 15px;
+  background: #7ee787;
+  vertical-align: -3px;
+  margin-left: 2px;
+  animation: blink 1.05s steps(1) infinite;
+}
+@keyframes blink{ 50%{ opacity: 0; } }
+
+.content-panel{
+  background: #f3f7fb;
+  border-top: 1px solid rgba(15,55,95,0.15);
+  box-shadow: 0 -20px 40px rgba(2,12,24,0.25);
+  position: relative;
+  z-index: 1;
+}
+
+section{ padding: 60px 0; }
+section + section{ border-top: 1px solid rgba(15,55,95,0.09); }
+
+.section-head{
+  margin-bottom: 34px;
+  max-width: 620px;
+}
+
+.section-head h2{
+  font-size: 27px;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  font-weight: 700;
+  color: var(--deep);
+}
+
+.section-head p{
+  color: var(--ink-muted);
+  font-size: 15px;
+  margin: 0;
+}
+
+.section-tag{
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--deep-soft);
+  background: rgba(79,179,240,0.14);
+  border: 1px solid rgba(79,179,240,0.3);
+  padding: 3px 9px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.prose{
+  max-width: 760px;
+  font-size: 15px;
+  color: #2b4a66;
+}
+.prose p{ margin: 0 0 15px; }
+.prose h3{
+  font-size: 17px;
+  color: var(--deep);
+  margin: 26px 0 8px;
+  font-weight: 700;
+}
+.prose h3:first-child{ margin-top: 0; }
+.prose ul{ margin: 0 0 15px; padding-left: 20px; }
+.prose li{ margin-bottom: 6px; }
+.prose strong{ color: var(--deep); }
+
+.feature-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.feature{
+  background: linear-gradient(180deg, #ffffff, #eef5fb);
+  border: 1px solid rgba(15,55,95,0.14);
+  border-radius: 6px;
+  padding: 22px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 6px 16px rgba(15,55,95,0.08);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+a.feature{ text-decoration: none; display: block; }
+
+a.feature:hover{
+  transform: translateY(-2px);
+  border-color: rgba(79,179,240,0.5);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.9) inset,
+    0 10px 24px rgba(15,55,95,0.14);
+}
+
+.feature h3{
+  font-size: 15.5px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--deep);
+}
+
+.feature p{
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.feature .glyph{
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(180deg, #7fd0ff, #1668ad);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 4px 10px rgba(15,55,95,0.3);
+}
+
+.download-panel{
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(15,55,95,0.16);
+  background: #ffffff;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 24px rgba(15,55,95,0.08);
+}
+
+.download-panel-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(15,55,95,0.12);
+  background: linear-gradient(180deg, #eaf3fb, #dcebf7);
+}
+
+.download-panel-head strong{ color: var(--deep); }
+
+.download-panel-head .version{
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+table.downloads{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+table.downloads th{
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-muted);
+  font-size: 12px;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(10,61,107,0.1);
+}
+
+table.downloads td{
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(10,61,107,0.08);
+  vertical-align: middle;
+  color: var(--ink);
+}
+
+table.downloads tr:last-child td{ border-bottom: none; }
+
+table.downloads .arch{ font-weight: 600; }
+
+table.downloads .filesize{ color: var(--ink-muted); font-size: 13px; }
+
+table.downloads .checksum{
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.dl-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 7px 16px;
+  border-radius: 4px;
+  color: #ffffff;
+  background: linear-gradient(180deg, #7fd0ff, #1668ad);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 4px 10px rgba(15,55,95,0.35);
+  border: 1px solid rgba(6,40,70,0.4);
+  white-space: nowrap;
+}
+
+.dl-link:hover{ filter: brightness(1.05); }
+
+.download-note{
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: 16px;
+}
+
+.download-note code{
+  font-family: var(--mono);
+  background: rgba(255,255,255,0.6);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid rgba(10,61,107,0.1);
+}
+
+.about-grid{
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.about-copy p{
+  color: var(--ink-muted);
+  font-size: 15px;
+  margin: 0 0 16px;
+}
+
+.spec-panel{
+  border-radius: 6px;
+  padding: 6px 20px;
+  background: #ffffff;
+  border: 1px solid rgba(15,55,95,0.14);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 6px 16px rgba(15,55,95,0.08);
+}
+
+.spec-row{
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(15,55,95,0.1);
+  font-size: 14px;
+}
+.spec-row:last-child{ border-bottom: none; }
+
+.spec-row dt{ color: var(--ink-muted); }
+
+.spec-row dd{
+  margin: 0;
+  font-weight: 600;
+  color: var(--deep);
+  text-align: right;
+}
+
+.kbd{
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--deep);
+  background: linear-gradient(180deg, #ffffff, #e2edf6);
+  border: 1px solid rgba(15,55,95,0.28);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 2px 7px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.kbd-row{ display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+.code{
+  background: #0b1a26;
+  border-radius: 6px;
+  border: 1px solid rgba(15,55,95,0.45);
+  padding: 16px 20px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #cfe8ff;
+  overflow-x: auto;
+  margin: 0 0 18px;
+}
+.code .prompt{ color: #4fb3f0; font-weight: 700; }
+.code .cmd{ color: #ffffff; }
+.code .out{ color: #7ea9c8; }
+.code .ok{ color: #7ee787; }
+.code .err{ color: #ff8a7a; }
+.code .cmt{ color: #5f88a5; font-style: italic; }
+
+.callout{
+  border-left: 3px solid var(--glass-blue);
+  background: rgba(79,179,240,0.09);
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #2b4a66;
+  margin: 0 0 18px;
+}
+.callout strong{ color: var(--deep); }
+
+.callout.warn{
+  border-left-color: #f6a23c;
+  background: rgba(246,162,60,0.11);
+}
+
+.callout.danger{
+  border-left-color: #e5544a;
+  background: rgba(229,84,74,0.1);
+}
+
+footer{ padding: 32px 0 40px; background: var(--taskbar); }
+
+footer .foot-panel{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+footer .foot-links{
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  padding: 0; margin: 0;
+}
+
+footer .foot-links a{
+  font-size: 13px;
+  color: rgba(234,245,255,0.75);
+  text-decoration: none;
+  font-weight: 600;
+}
+footer .foot-links a:hover{ color: #ffffff; }
+
+footer .copyright{
+  font-size: 13px;
+  color: rgba(234,245,255,0.65);
+}
+
+@media (max-width: 900px){
+  .feature-grid{ grid-template-columns: repeat(2, 1fr); }
+  .about-grid{ grid-template-columns: 1fr; gap: 32px; }
+}
+
+@media (max-width: 780px){
+  .wrap{ padding: 0 20px; }
+  .feature-grid{ grid-template-columns: 1fr; }
+  .navlinks{ display: none; }
+  table.downloads .checksum{ display: none; }
+  .hero{ padding: 52px 0 36px; }
+  footer .foot-panel{ flex-direction: column; align-items: flex-start; }
+  .viewer-body{ font-size: 11.5px; padding: 20px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="atmosphere">
+  <div class="ray"></div>
+  <div class="bokeh b1"></div>
+  <div class="bokeh b2"></div>
+  <div class="bokeh b3"></div>
+  <div class="bokeh b4"></div>
+  <div class="haze"></div>
+</div>
+
+<nav>
+  <div class="dock">
+    <a class="brand" href="#top"><span class="orb"></span>SigeonOS Manual</a>
+    <ul class="navlinks">
+      <li><a href="#getting-started">Getting Started</a></li>
+      <li><a href="#desktop">Desktop</a></li>
+      <li><a href="#finder">Files</a></li>
+      <li><a href="#apps">Apps</a></li>
+      <li><a href="#terminal">Terminal</a></li>
+      <li><a href="#network">Network</a></li>
+      <li><a href="#shortcuts">Shortcuts</a></li>
+    </ul>
+    <a class="nav-cta" href="#download">Get SigeonOS</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+
+    <div class="hero-copy">
+      <div class="eyebrow-plain"><span class="pip"></span> Manual · 09-Beta “Sigeon Feather”</div>
+      <h1>Everything you need to fly.</h1>
+      <p class="lead">A complete guide to SigeonOS — the desktop, the apps, the terminal, and the PEX runtime that ties it all together.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#getting-started">Start reading</a>
+        <a class="btn btn-secondary" href="#shortcuts">Keyboard shortcuts</a>
+      </div>
+    </div>
+
+    <div class="viewer" id="overview">
+      <div class="viewer-chrome">
+        <div class="traffic"><span></span><span></span><span></span></div>
+        <div class="title">sigeon-terminal — 09-Beta</div>
+      </div>
+      <div class="viewer-body">
+        <div class="term-head">SigeonOS Terminal · 09-Beta “Sigeon Feather”</div>
+        <div class="term-line"><span class="prompt">sigeon ~ $</span> <span class="cmd">help</span></div>
+        <div class="term-line out">  ls        list directory contents</div>
+        <div class="term-line out">  cd        change directory</div>
+        <div class="term-line out">  cat       print a file to the screen</div>
+        <div class="term-line out">  mkdir     create a directory</div>
+        <div class="term-line out">  touch     create an empty file</div>
+        <div class="term-line out">  rm        remove a file or folder</div>
+        <div class="term-line out">  open      open a file in its default app</div>
+        <div class="term-line out">  zip       archive a folder</div>
+        <div class="term-line out">  unzip     extract an archive</div>
+        <div class="term-line out">  clear     clear the terminal</div>
+        <div class="term-line out">  help      show this list</div>
+        <div class="term-line"><span class="prompt">sigeon ~ $</span> <span class="cmd">ls</span></div>
+        <div class="term-line out">Desktop  Documents  Downloads  Applications</div>
+        <div class="term-line"><span class="prompt">sigeon ~ $</span> <span class="cmd">cat Documents/notes.txt</span></div>
+        <div class="term-line ok">Remember to feed the pigeons.</div>
+        <div class="term-line"><span class="prompt">sigeon ~ $</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="content-panel">
+
+<!-- ===================== IN THIS MANUAL ===================== -->
+<section id="contents">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Contents</div>
+      <h2>In this manual</h2>
+      <p>Jump straight to the section you need.</p>
+    </div>
+    <div class="feature-grid">
+      <a class="feature" href="#getting-started">
+        <div class="glyph">1</div>
+        <h3>Getting Started</h3>
+        <p>Boot the image, complete first-boot setup, and sign in.</p>
+      </a>
+      <a class="feature" href="#desktop">
+        <div class="glyph">2</div>
+        <h3>The Desktop</h3>
+        <p>Top bar, dock, Control Center, notifications, and workspaces.</p>
+      </a>
+      <a class="feature" href="#windows">
+        <div class="glyph">3</div>
+        <h3>Windows</h3>
+        <p>Move, resize, minimize, zoom, and cycle between windows.</p>
+      </a>
+      <a class="feature" href="#finder">
+        <div class="glyph">4</div>
+        <h3>Finder &amp; Files</h3>
+        <p>The SIGCOM tree, file operations, ZIP archives, and Trash.</p>
+      </a>
+      <a class="feature" href="#apps">
+        <div class="glyph">5</div>
+        <h3>Applications</h3>
+        <p>Every built-in app, from Finder to GoonStore.</p>
+      </a>
+      <a class="feature" href="#terminal">
+        <div class="glyph">6</div>
+        <h3>Terminal</h3>
+        <p>Commands, paths, and a short worked session.</p>
+      </a>
+      <a class="feature" href="#pex">
+        <div class="glyph">7</div>
+        <h3>PEX &amp; Goon Code</h3>
+        <p>Running .pex executables and the PEX32 container.</p>
+      </a>
+      <a class="feature" href="#network">
+        <div class="glyph">8</div>
+        <h3>Networking</h3>
+        <p>Wi-Fi, Network Center, DNS, and GoonMessage.</p>
+      </a>
+      <a class="feature" href="#settings">
+        <div class="glyph">9</div>
+        <h3>Settings</h3>
+        <p>All eighteen panes and what each one controls.</p>
+      </a>
+      <a class="feature" href="#customize">
+        <div class="glyph">10</div>
+        <h3>Customization</h3>
+        <p>Wallpapers, accent colours, widgets, and the dock.</p>
+      </a>
+      <a class="feature" href="#shortcuts">
+        <div class="glyph">11</div>
+        <h3>Keyboard Shortcuts</h3>
+        <p>The full shortcut table.</p>
+      </a>
+      <a class="feature" href="#troubleshooting">
+        <div class="glyph">12</div>
+        <h3>Troubleshooting</h3>
+        <p>Kernel panics, error codes, and recovery.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GETTING STARTED ===================== -->
+<section id="getting-started">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 1</div>
+      <h2>Getting started</h2>
+      <p>From a cold machine to a signed-in desktop.</p>
+    </div>
+
+    <div class="prose">
+      <h3>Booting SigeonOS</h3>
+      <p>Write the SigeonOS ISO to a USB stick or attach it to a virtual machine, then boot from it. The boot screen shows the pigeon logo, the release name, and a progress bar that walks through hardware initialisation, memory detection, PCI scanning, networking, Wi-Fi, audio, and finally the desktop.</p>
+      <p>SigeonOS is designed to run on modest hardware. The image is small (~7&nbsp;MB) and the minimum RAM is around <strong>64&nbsp;MB</strong>, so it will boot comfortably on older machines and virtual machines.</p>
+
+      <h3>First-boot setup</h3>
+      <p>The first time you boot, SigeonOS runs a short setup wizard. You will be asked to:</p>
+      <ul>
+        <li><strong>Choose a language.</strong> English, Deutsch, Italiano, Russian, and Dansk are available. Changing the language later only affects SigeonOS-owned strings — your filenames, usernames, and messages are never translated.</li>
+        <li><strong>Create a local account.</strong> Pick a username and a password. You can create up to eight local accounts.</li>
+        <li><strong>Decide about telemetry.</strong> Off by default.</li>
+        <li><strong>Optionally create a GoonMessage account.</strong> This is the online identity used by GoonMessage and GoonStore. You can skip it and add it later from Settings → Accounts.</li>
+      </ul>
+
+      <h3>Signing in</h3>
+      <p>After setup you are taken to the login screen. Pick a profile, type your password, and press <span class="kbd">Enter</span>. If you have more than one account, you can switch between them with the profile selector. <span class="kbd">Tab</span> moves between the username and password fields.</p>
+
+      <div class="callout">
+        <strong>Forgot your password?</strong> Local accounts are stored in the SigeonOS configuration journal. A factory reset from Settings → About will clear accounts and return the machine to first-boot setup, but it also clears your files, so it should be a last resort.
+      </div>
+
+      <h3>What is on the disk</h3>
+      <p>SigeonOS uses a small filesystem called <strong>SigeonFS</strong> with an atomic two-bank snapshot journal. If the machine loses power mid-write, the previous committed snapshot is used on the next boot, so you should not lose already-saved files. Writable storage is on an optional ATA disk; without one, the filesystem runs in RAM and resets on reboot.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DESKTOP ===================== -->
+<section id="desktop">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 2</div>
+      <h2>The desktop</h2>
+      <p>The top bar, the dock, the Control Center, notifications, and workspaces.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature">
+        <h3>Top bar</h3>
+        <p>The SigeonOS ball on the left opens the system menu. File, Edit, View, Window, Network, System, and Help menus sit beside it. The clock and Control Center button live on the right.</p>
+      </div>
+      <div class="feature">
+        <h3>Dock</h3>
+        <p>Pinned apps sit on the left, dynamic items appear as you open files, and the trash sits at the far right. Auto-hide, size, and pinning are all configurable.</p>
+      </div>
+      <div class="feature">
+        <h3>Control Center</h3>
+        <p>Wi-Fi, Bluetooth, Airplane Mode, Do Not Disturb, Night Shift, display brightness, volume, screenshot, screen recording, and a shortcut into Settings.</p>
+      </div>
+      <div class="feature">
+        <h3>Notifications</h3>
+        <p>Notifications appear in the top-right corner for a few seconds. Click the clock to open the Notification Center and see everything you have missed.</p>
+      </div>
+      <div class="feature">
+        <h3>Workspaces</h3>
+        <p>Up to seven virtual desktops. Each one has its own windows, desktop icons, and widgets. Open the workspace overview to switch or add a new one.</p>
+      </div>
+      <div class="feature">
+        <h3>Desktop icons</h3>
+        <p>Files in <code>/SIGCOM/Desktop</code> appear as icons. Drag to move, double-click to open, right-click for New Folder, New File, Rename, Delete, Pin to Dock, and Add Widget.</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:32px;">
+      <h3>The SigeonOS menu</h3>
+      <p>Clicking the ball in the top-left corner opens the system menu. It contains About This SigeonOS, Software Update, System Settings, Sigeon Account, Control Center, GoonStore, About Your System, Recent Applications, Force Quit App, Sleep, Restart, Shut Down, Lock Screen, and Log Out.</p>
+
+      <h3>Control Center</h3>
+      <p>The two-slider panel in the top-right corner adjusts <strong>display brightness</strong> and <strong>system volume</strong> live. The Wi-Fi, Bluetooth, Airplane, DND, and Night Shift tiles toggle immediately. Shot and Record buttons take a screenshot or start a screen recording; the Settings button closes the panel and opens Settings.</p>
+
+      <h3>Notifications</h3>
+      <p>Apps can post notifications through the in-kernel notification service. Each one carries the app name, an icon, and a message. Notifications are auto-dismissed after the duration set in Settings → Notifications, and the Notification Center keeps a scrollable history.</p>
+
+      <h3>Workspaces</h3>
+      <p>SigeonOS has up to seven workspaces. Each one keeps its own set of windows, desktop icons, and widgets, so you can keep, for example, a browser and messenger on desktop 1 and a terminal and text editor on desktop 2. Desktop 1 is permanent; the rest can be added and removed from the overview.</p>
+      <p>Open the overview with <span class="kbd-row"><span class="kbd">Shift</span><span class="kbd">Tab</span><span class="kbd">W</span><span class="kbd">Space</span></span>. Click a preview to switch, or use the plus tile to add a new workspace. The overview can also be opened from System → Control Center.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WINDOWS ===================== -->
+<section id="windows">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 3</div>
+      <h2>Windows</h2>
+      <p>How windows behave and how to move them around.</p>
+    </div>
+
+    <div class="prose">
+      <h3>Anatomy of a window</h3>
+      <p>Every SigeonOS window has a consistent chrome: a rounded Aero-glass frame, a coloured title bar, and three round buttons on the left — <strong>close</strong> (red), <strong>minimize</strong> (yellow), and <strong>zoom</strong> (green). The title bar shows the document name, or the custom instance name you have given the window.</p>
+
+      <h3>Moving and resizing</h3>
+      <ul>
+        <li><strong>Move:</strong> drag anywhere on the title bar.</li>
+        <li><strong>Resize:</strong> drag the bottom-right corner of the window. The minimum size is roughly 180 × 100 pixels.</li>
+        <li><strong>Zoom:</strong> click the green button, or use <strong>Window → Zoom</strong>. Zoom expands the window to fill the work area above the dock and below the top bar; clicking again restores the previous size and position.</li>
+        <li><strong>Minimize:</strong> click the yellow button, or use <strong>Window → Minimize</strong>. The window shrinks into its dock icon with a short animation.</li>
+        <li><strong>Close:</strong> click the red button, or use <strong>File → Close Window</strong>.</li>
+      </ul>
+
+      <h3>Focus and cycling</h3>
+      <p>Clicking a window brings it to the front and gives it keyboard focus. Use <strong>Window → Cycle Windows</strong> to step through the open windows in the current workspace, or <strong>Window → Minimize All</strong> to clear the desktop in one go. Clicking a dock icon for an already-open app focuses its window; clicking it again minimizes it.</p>
+
+      <h3>Close animations</h3>
+      <p>Windows close with a short shrink-and-fade animation, which can be turned off in Settings → Appearance if you prefer the instant close.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FINDER ===================== -->
+<section id="finder">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 4</div>
+      <h2>Finder &amp; files</h2>
+      <p>The SIGCOM tree, file operations, archives, and Trash.</p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-copy">
+        <h3 style="color:var(--deep); font-size:17px; margin:0 0 10px;">The SIGCOM tree</h3>
+        <p>SigeonOS keeps user-visible files inside <code>/SIGCOM</code>. The Desktop you see is the same folder as <code>/SIGCOM/Desktop</code> — there is no second copy anywhere, so a file on the desktop is a file in Finder and vice versa.</p>
+        <p>The Applications folder under <code>/SIGCOM/Applications</code> holds the built-in app launchers. <code>/SIGCOM/boot</code> holds the protected window and system components, which Finder deliberately does not treat as ordinary applications.</p>
+
+        <h3 style="color:var(--deep); font-size:17px; margin:22px 0 10px;">File operations</h3>
+        <ul style="color:var(--ink-muted); font-size:15px; padding-left:20px; margin:0 0 16px;">
+          <li><strong>Open:</strong> double-click a file. Text opens in TxtWrench, images in Image Viewer, videos in Media Player, .pex executables run, and .html opens in SigeonWeb.</li>
+          <li><strong>New Folder / New File:</strong> right-click in the content area, or in Finder's context menu.</li>
+          <li><strong>Rename:</strong> right-click a file and choose Rename, or select it and press the shortcut.</li>
+          <li><strong>Move:</strong> drag files onto a folder in the sidebar or into another Finder window.</li>
+          <li><strong>Delete:</strong> right-click and choose Delete. The file goes to Trash, where it can be restored or the Trash can be emptied.</li>
+          <li><strong>ZIP:</strong> right-click a folder and choose Compress to build a <code>.zip</code> archive, or right-click a <code>.zip</code> and choose Extract to unpack it.</li>
+        </ul>
+
+        <h3 style="color:var(--deep); font-size:17px; margin:22px 0 10px;">File associations</h3>
+        <p>SigeonOS decides which app opens a file by extension, then by content. A file with a <code>.png</code> or <code>.gsv</code> extension opens in Image Viewer; a file whose contents begin with the PNG signature opens in Image Viewer even if it has no extension. The full mapping lives in <code>/SIGCOM/FileAssociations.cfg</code>, which you can edit in TxtWrench.</p>
+      </div>
+
+      <div>
+        <dl class="spec-panel">
+          <div class="spec-row">
+            <dt>Desktop</dt>
+            <dd>/SIGCOM/Desktop</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Documents</dt>
+            <dd>/SIGCOM/Documents</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Downloads</dt>
+            <dd>/SIGCOM/Downloads</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Applications</dt>
+            <dd>/SIGCOM/Applications</dd>
+          </div>
+          <div class="spec-row">
+            <dt>System</dt>
+            <dd>/SIGCOM/boot</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Config files</dt>
+            <dd>/SIGCOM/*.cfg</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== APPS ===================== -->
+<section id="apps">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 5</div>
+      <h2>Applications</h2>
+      <p>Every built-in app and what it does.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature">
+        <h3>Finder</h3>
+        <p>Browse and organise files. Sidebar favourites, multi-select, drag-and-drop, rename, and archive support.</p>
+      </div>
+      <div class="feature">
+        <h3>Terminal</h3>
+        <p>A fast command shell one click from any desktop. See the Terminal chapter for the command list.</p>
+      </div>
+      <div class="feature">
+        <h3>TxtWrench</h3>
+        <p>A small text editor with undo, redo, find, word wrap, zoom, and a live line/column status bar.</p>
+      </div>
+      <div class="feature">
+        <h3>Image Viewer</h3>
+        <p>Opens PNG and Sigeon GSV images. Zoom in, zoom out, or fit to the window.</p>
+      </div>
+      <div class="feature">
+        <h3>Media Player</h3>
+        <p>Plays Sigeon SMPV video and PCM WAV audio. Compressed audio formats are listed but not yet decoded.</p>
+      </div>
+      <div class="feature">
+        <h3>Clock</h3>
+        <p>A large analog-style clock with the current time and date.</p>
+      </div>
+      <div class="feature">
+        <h3>SigeonWeb</h3>
+        <p>A small HTTP browser with an address bar, history, back/forward, and the built-in PexSearch landing page.</p>
+      </div>
+      <div class="feature">
+        <h3>PexSearch</h3>
+        <p>The local search page that opens inside SigeonWeb. Search works even when the external network is unavailable.</p>
+      </div>
+      <div class="feature">
+        <h3>GoonStore</h3>
+        <p>Browse, download, and upload files on the Sigeon Data Server. Files can carry a name, description, and icon.</p>
+      </div>
+      <div class="feature">
+        <h3>GoonMessage</h3>
+        <p>The Sigeon messaging app. Sign in with a Sigeon Account to chat with other people online.</p>
+      </div>
+      <div class="feature">
+        <h3>Network Center</h3>
+        <p>Live network status, Wi-Fi scan and connect, DNS editor, and a download speed test.</p>
+      </div>
+      <div class="feature">
+        <h3>Weather</h3>
+        <p>A small weather widget that refreshes over the network for a city you choose.</p>
+      </div>
+      <div class="feature">
+        <h3>Settings</h3>
+        <p>Eighteen panes covering Wi-Fi, displays, sound, keyboard, accounts, storage, and system actions.</p>
+      </div>
+      <div class="feature">
+        <h3>Widget Gallery</h3>
+        <p>Add, remove, resize, and configure desktop widgets. Widgets are per-workspace.</p>
+      </div>
+      <div class="feature">
+        <h3>Application Lister</h3>
+        <p>A task-list window that shows every open window with Focus, Minimize, Zoom, and Close controls.</p>
+      </div>
+      <div class="feature">
+        <h3>Stated Computer</h3>
+        <p>A system information panel: RAM, kernel, uptime, and the current network state.</p>
+      </div>
+      <div class="feature">
+        <h3>Recent Applications</h3>
+        <p>Quick access to the applications you have opened recently.</p>
+      </div>
+      <div class="feature">
+        <h3>Trash</h3>
+        <p>Deleted files land here. Restore individual items or empty the bin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TERMINAL ===================== -->
+<section id="terminal">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 6</div>
+      <h2>Terminal</h2>
+      <p>Commands, paths, and a short worked session.</p>
+    </div>
+
+    <div class="prose" style="max-width:820px;">
+      <p>The Terminal is a real shell inside the kernel. It keeps a working directory, a scrollback buffer, and a small command history. The prompt shows the current directory, like <code>sigeon ~ $</code>.</p>
+
+      <h3>Commands</h3>
+    </div>
+
+    <div class="download-panel" style="margin-bottom:24px;">
+      <div class="download-panel-head">
+        <strong>Terminal command reference</strong>
+        <span class="version">09-Beta</span>
+      </div>
+      <table class="downloads">
+        <thead>
+          <tr>
+            <th style="width:120px;">Command</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="arch">ls</td><td>List the contents of the current directory.</td></tr>
+          <tr><td class="arch">cd&nbsp;&lt;dir&gt;</td><td>Change the current directory. <code>cd ..</code> goes up one level, <code>cd /</code> goes to the root.</td></tr>
+          <tr><td class="arch">pwd</td><td>Print the current directory path.</td></tr>
+          <tr><td class="arch">cat&nbsp;&lt;file&gt;</td><td>Print the contents of a text file.</td></tr>
+          <tr><td class="arch">echo&nbsp;&lt;text&gt;</td><td>Print the text back to the terminal.</td></tr>
+          <tr><td class="arch">mkdir&nbsp;&lt;name&gt;</td><td>Create a directory.</td></tr>
+          <tr><td class="arch">touch&nbsp;&lt;name&gt;</td><td>Create an empty file.</td></tr>
+          <tr><td class="arch">rm&nbsp;&lt;name&gt;</td><td>Remove a file. Use <code>rm -r</code> for folders.</td></tr>
+          <tr><td class="arch">open&nbsp;&lt;file&gt;</td><td>Open a file in its default application.</td></tr>
+          <tr><td class="arch">zip&nbsp;&lt;folder&gt;</td><td>Archive a folder into a <code>.zip</code> file.</td></tr>
+          <tr><td class="arch">unzip&nbsp;&lt;file&gt;</td><td>Extract a <code>.zip</code> archive into the current directory.</td></tr>
+          <tr><td class="arch">clear</td><td>Clear the scrollback and start with an empty screen.</td></tr>
+          <tr><td class="arch">help</td><td>Show the built-in command list.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose" style="max-width:820px; margin-bottom:14px;">
+      <h3>A short session</h3>
+    </div>
+
+    <div class="code">
+<span class="prompt">sigeon ~ $</span> <span class="cmd">mkdir Projects</span>
+<span class="prompt">sigeon ~ $</span> <span class="cmd">cd Projects</span>
+<span class="prompt">sigeon ~/Projects $</span> <span class="cmd">touch readme.txt</span>
+<span class="prompt">sigeon ~/Projects $</span> <span class="cmd">echo Hello, SigeonOS</span>
+<span class="out">Hello, SigeonOS</span>
+<span class="prompt">sigeon ~/Projects $</span> <span class="cmd">cd ..</span>
+<span class="prompt">sigeon ~ $</span> <span class="cmd">zip Projects</span>
+<span class="ok">zip: wrote 2 entries</span>
+<span class="prompt">sigeon ~ $</span> <span class="cursor"></span>
+    </div>
+
+    <div class="callout">
+      <strong>Tip:</strong> running a <code>.pex</code> file from the terminal routes the program's output back into that same terminal, so you can see a program's print statements where you launched it.
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PEX ===================== -->
+<section id="pex">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 7</div>
+      <h2>PEX &amp; Goon Code</h2>
+      <p>Running executables and building simple GUI programs.</p>
+    </div>
+
+    <div class="prose" style="max-width:800px;">
+      <h3>What a .pex file is</h3>
+      <p><strong>.pex</strong> is the one executable extension on SigeonOS. A <code>.pex</code> file is a PEX32 container: a short header followed by either native code or Goon Code bytecode, plus an optional string pool and a copy of the original source for the GUI renderer.</p>
+      <p>Double-click a <code>.pex</code> file in Finder, or select it and press <strong>Open</strong>, to run it. You can also drag a <code>.pex</code> onto the dock to pin it for quick access.</p>
+
+      <h3>Permissions</h3>
+      <p>When a PEX program asks for something it does not already have permission for, SigeonOS shows a permission prompt with the requesting access, a short description, and Allow / Disallow buttons. Tick <em>Remember this</em> to keep the decision for that program. The permission mask covers filesystem read, filesystem write, filesystem delete, network, UI, and hardware.</p>
+
+      <h3>Goon Code</h3>
+      <p>Goon Code is the small language that compiles to PEX32 bytecode. A Goon Code program describes a window with a title, a size, and a list of controls, then handles events raised by those controls. The kernel ships a Goon renderer that draws the window, handles clicks and keyboard input, and drives the VM.</p>
+
+      <h3>Launch errors</h3>
+      <p>If a <code>.pex</code> file cannot be started, SigeonOS shows an alert with the specific error code. The codes you are most likely to see are:</p>
+      <ul>
+        <li><strong>−1</strong> — invalid PEX magic. The file is not a PEX32 container.</li>
+        <li><strong>−2</strong> — too small. The file is truncated.</li>
+        <li><strong>−3</strong> — out of memory. Not enough free RAM to load the image.</li>
+        <li><strong>−4</strong> — load failed. The container was valid but the payload could not be loaded.</li>
+        <li><strong>−5</strong> — invalid pointer. A program passed a pointer outside its own address window.</li>
+        <li><strong>−6</strong> — invalid opcode. The bytecode contains an instruction the VM does not recognise.</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Sandboxing:</strong> native PEX programs run inside a fixed address window and can only read or write memory inside that window. Any attempt to reach outside it is reported as an invalid-pointer error rather than being allowed through.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NETWORK ===================== -->
+<section id="network">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 8</div>
+      <h2>Networking</h2>
+      <p>Wi-Fi, wired Ethernet, DNS, and the online apps.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature">
+        <h3>Wired Ethernet</h3>
+        <p>Intel e1000 and Realtek RTL8139 adapters are detected at boot and brought up automatically with DHCP.</p>
+      </div>
+      <div class="feature">
+        <h3>Wi-Fi</h3>
+        <p>Intel 8260, 8265, and 9260 wireless adapters are recognised. Wi-Fi Settings can scan and store network profiles.</p>
+      </div>
+      <div class="feature">
+        <h3>Network Center</h3>
+        <p>Four tabs: an overview, a Wi-Fi tab, a DNS editor, and a download speed test.</p>
+      </div>
+      <div class="feature">
+        <h3>DNS</h3>
+        <p>DNS servers come from DHCP by default. You can pin your own primary and secondary DNS in the DNS tab.</p>
+      </div>
+      <div class="feature">
+        <h3>GoonStore &amp; GoonMessage</h3>
+        <p>Both apps use the Sigeon Data Server over HTTP. They need either wired Ethernet or a working Wi-Fi link.</p>
+      </div>
+      <div class="feature">
+        <h3>Airplane Mode</h3>
+        <p>Switches off wireless traffic in one click without touching the wired interface or your saved Wi-Fi settings.</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:30px; max-width:800px;">
+      <h3>Connecting to Wi-Fi</h3>
+      <p>Open Settings → Wi-Fi. The page scans automatically and shows the networks the adapter can see. Pick a network to fill the SSID field, type the password, and press <strong>Join</strong>. The profile is saved so the network can be rejoined later without retyping the password.</p>
+
+      <h3>Using the Network Center</h3>
+      <ul>
+        <li><strong>Overview</strong> — link type, SSID, IPv4 address, gateway, and active DNS server.</li>
+        <li><strong>Wi-Fi</strong> — scan for networks and connect to one from the list.</li>
+        <li><strong>DNS</strong> — set a primary and secondary DNS server, or set both back to Automatic to use DHCP.</li>
+        <li><strong>Speed</strong> — run a download speed test against the Sigeon test server.</li>
+      </ul>
+
+      <div class="callout warn">
+        <strong>Turning Wi-Fi off does not turn off the network.</strong> If a wired adapter is connected, SigeonOS keeps using it. Only Airplane Mode disables both radios at once.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SETTINGS ===================== -->
+<section id="settings">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 9</div>
+      <h2>Settings</h2>
+      <p>Every pane and what it controls.</p>
+    </div>
+
+    <div class="download-panel">
+      <div class="download-panel-head">
+        <strong>Settings panes</strong>
+        <span class="version">18 panes</span>
+      </div>
+      <table class="downloads">
+        <thead>
+          <tr>
+            <th style="width:180px;">Pane</th>
+            <th>Controls</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="arch">Wi-Fi</td><td>Scan, connect, save, and forget wireless networks.</td></tr>
+          <tr><td class="arch">Bluetooth</td><td>Enable or disable the Bluetooth radio.</td></tr>
+          <tr><td class="arch">Network</td><td>Live network overview and a shortcut into the DNS editor.</td></tr>
+          <tr><td class="arch">Sound</td><td>Output volume, mute, and a test tone.</td></tr>
+          <tr><td class="arch">Displays</td><td>Brightness, Night Shift, and resolution information.</td></tr>
+          <tr><td class="arch">Appearance</td><td>Accent colour, window animations, and dock appearance.</td></tr>
+          <tr><td class="arch">Notifications</td><td>Notification duration and Do Not Disturb.</td></tr>
+          <tr><td class="arch">Dock</td><td>Dock size and auto-hide.</td></tr>
+          <tr><td class="arch">Widgets</td><td>Desktop widget layout and widget gallery shortcut.</td></tr>
+          <tr><td class="arch">Privacy</td><td>Telemetry and per-app permission memory.</td></tr>
+          <tr><td class="arch">Accounts</td><td>Local accounts and the Sigeon online account.</td></tr>
+          <tr><td class="arch">Storage</td><td>Filesystem usage and the persistent ATA disk status.</td></tr>
+          <tr><td class="arch">Keyboard</td><td>Keyboard layout and repeat behaviour.</td></tr>
+          <tr><td class="arch">System Keybinds</td><td>Record custom shortcuts for system actions.</td></tr>
+          <tr><td class="arch">Mouse</td><td>Pointer speed and button behaviour.</td></tr>
+          <tr><td class="arch">Date &amp; Time</td><td>Time zone and 12/24-hour clock.</td></tr>
+          <tr><td class="arch">Update</td><td>Check for and apply a SigeonOS update.</td></tr>
+          <tr><td class="arch">About</td><td>Version, kernel, license, and Factory Reset.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose" style="margin-top:26px; max-width:800px;">
+      <h3>System keybinds</h3>
+      <p>The System Keybinds pane lets you record your own combination for a system action. Click a shortcut row and press the keys you want; SigeonOS captures the combination and saves it to the configuration journal. The default binding opens the workspace overview.</p>
+
+      <div class="callout danger">
+        <strong>Factory Reset</strong> is on the About pane. It wipes local accounts, files, and settings, and returns the machine to first-boot setup. There is no undo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CUSTOMIZATION ===================== -->
+<section id="customize">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 10</div>
+      <h2>Customization</h2>
+      <p>Wallpapers, accent colours, widgets, and the dock.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature">
+        <h3>Wallpaper</h3>
+        <p>Pick any <code>.gsv</code> file in Settings → Appearance. SigeonOS scales it to the framebuffer without distorting the aspect ratio.</p>
+      </div>
+      <div class="feature">
+        <h3>Accent colour</h3>
+        <p>Ten accent colours — Ocean, Mint, Sun, Berry, Slate, Violet, Ember, Forest, Crimson, and Indigo. The accent tints windows, menus, dock highlights, and the top bar.</p>
+      </div>
+      <div class="feature">
+        <h3>Dock</h3>
+        <p>Change the icon size and turn auto-hide on or off. Pinned apps stay on the left; dynamic items appear next to them as you open files.</p>
+      </div>
+      <div class="feature">
+        <h3>Widgets</h3>
+        <p>Open the Widget Gallery to add widgets to the current workspace. Each widget can be moved, resized, refreshed, or removed from its right-click menu.</p>
+      </div>
+      <div class="feature">
+        <h3>Night Shift</h3>
+        <p>Warm the display by reducing blue light. Toggle it from Control Center or Settings → Displays.</p>
+      </div>
+      <div class="feature">
+        <h3>Desktop icons</h3>
+        <p>Show or hide desktop icons from View → Show/Hide Desktop Icons, or from the desktop right-click menu.</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:30px; max-width:800px;">
+      <h3>Wallpaper files</h3>
+      <p>SigeonOS wallpapers use the <strong>GSV</strong> format — a small RLE-compressed RGB565 image. The default wallpaper is <code>/SIGCOM/Desktop/Background.gsv</code>. To set a new one, drop a <code>.gsv</code> file into <code>/SIGCOM/Desktop</code> and choose it from Settings → Appearance.</p>
+
+      <h3>Widgets per workspace</h3>
+      <p>Widgets belong to the workspace they were added on. Add a clock widget to desktop 1 and a weather widget to desktop 2 and they will only appear where you put them. Removing a workspace moves its widgets, windows, and icons to desktop 1 rather than deleting them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SHORTCUTS ===================== -->
+<section id="shortcuts">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 11</div>
+      <h2>Keyboard shortcuts</h2>
+      <p>The full shortcut table for SigeonOS 09-Beta.</p>
+    </div>
+
+    <div class="download-panel">
+      <div class="download-panel-head">
+        <strong>System shortcuts</strong>
+        <span class="version">09-Beta</span>
+      </div>
+      <table class="downloads">
+        <thead>
+          <tr>
+            <th style="width:260px;">Action</th>
+            <th>Shortcut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="arch">Take a screenshot</td>
+            <td class="kbd-row"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">S</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Open PexSearch</td>
+            <td class="kbd-row"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">S</span><span style="color:var(--ink-muted);">then</span><span class="kbd">Enter</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Start / stop screen recording</td>
+            <td class="kbd-row"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">R</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Workspace overview</td>
+            <td class="kbd-row"><span class="kbd">Shift</span><span class="kbd">Tab</span><span class="kbd">W</span><span class="kbd">Space</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Switch workspace</td>
+            <td>Click a preview in the workspace overview.</td>
+          </tr>
+          <tr>
+            <td class="arch">Cycle windows</td>
+            <td>Window → Cycle Windows</td>
+          </tr>
+          <tr>
+            <td class="arch">Minimize all windows</td>
+            <td>Window → Minimize All</td>
+          </tr>
+          <tr>
+            <td class="arch">Close focused window</td>
+            <td>File → Close Window</td>
+          </tr>
+          <tr>
+            <td class="arch">Toggle desktop icons</td>
+            <td>View → Show/Hide Desktop Icons</td>
+          </tr>
+          <tr>
+            <td class="arch">Move between text fields</td>
+            <td class="kbd-row"><span class="kbd">Tab</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Move within a text field</td>
+            <td class="kbd-row"><span class="kbd">←</span><span class="kbd">→</span><span class="kbd">Home</span><span class="kbd">End</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Delete a character</td>
+            <td class="kbd-row"><span class="kbd">Backspace</span><span class="kbd">Delete</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Select all text</td>
+            <td class="kbd-row"><span class="kbd">Ctrl</span><span class="kbd">A</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Copy / cut / paste</td>
+            <td class="kbd-row"><span class="kbd">Ctrl</span><span class="kbd">C</span><span class="kbd">X</span><span class="kbd">V</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Undo in a text field</td>
+            <td class="kbd-row"><span class="kbd">Ctrl</span><span class="kbd">Z</span></td>
+          </tr>
+          <tr>
+            <td class="arch">Manual crash (developer)</td>
+            <td class="kbd-row"><span class="kbd">Shift</span><span class="kbd">C</span><span class="kbd">R</span><span class="kbd">Enter</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="download-note">You can add your own bindings in Settings → System Keybinds. Recorded bindings are saved to the configuration journal and take effect immediately.</p>
+  </div>
+</section>
+
+<!-- ===================== TROUBLESHOOTING ===================== -->
+<section id="troubleshooting">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-tag">Chapter 12</div>
+      <h2>Troubleshooting</h2>
+      <p>What to do when something goes wrong.</p>
+    </div>
+
+    <div class="prose" style="max-width:820px;">
+      <h3>Kernel panic</h3>
+      <p>If the kernel hits a fault it cannot recover from, it shows a kernel panic screen: the error code, a short log line, a QR code, and a prompt to restart. The QR code links to the SigeonOS panic page with the code included, so you can look up the specific fault.</p>
+      <p>Press <span class="kbd">Enter</span> on the panic screen to attempt a restart. If the machine restarts straight back into the same panic, note the code, boot from the ISO again, and report it.</p>
+
+      <h3>Common error codes</h3>
+    </div>
+
+    <div class="download-panel" style="margin-bottom:24px;">
+      <div class="download-panel-head">
+        <strong>Exception codes</strong>
+        <span class="version">Reference</span>
+      </div>
+      <table class="downloads">
+        <thead>
+          <tr>
+            <th style="width:240px;">Code</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="arch">EXC_DIVIDE</td><td>A divide error in kernel code.</td></tr>
+          <tr><td class="arch">EXC_INVALID_OPCODE</td><td>An illegal instruction was executed.</td></tr>
+          <tr><td class="arch">EXC_DOUBLE_FAULT</td><td>A second fault occurred while handling the first.</td></tr>
+          <tr><td class="arch">EXC_INVALID_TSS</td><td>The task-state segment is invalid.</td></tr>
+          <tr><td class="arch">EXC_SEGMENT_NP</td><td>A segment that is not present was referenced.</td></tr>
+          <tr><td class="arch">EXC_STACK</td><td>Stack overflow or an invalid stack access.</td></tr>
+          <tr><td class="arch">EXC_GENERAL_PROTECTION</td><td>A general protection fault.</td></tr>
+          <tr><td class="arch">EXC_PAGE_FAULT</td><td>A memory access to an unmapped page.</td></tr>
+          <tr><td class="arch">EXC_ALIGNMENT</td><td>An unaligned access where alignment was required.</td></tr>
+          <tr><td class="arch">MANUAL_CRASH</td><td>The developer crash chord was pressed.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose" style="max-width:820px;">
+      <h3>If an app will not open</h3>
+      <ul>
+        <li>Check the file's extension. SigeonOS opens <code>.pex</code> files as executables, images in Image Viewer, video in Media Player, and everything else in TxtWrench.</li>
+        <li>If a PEX alert shows an error code, look it up in the PEX chapter — the codes are specific to what went wrong.</li>
+        <li>If the file appears blank in Finder, it may not have finished being written. Re-copy it and try again.</li>
+      </ul>
+
+      <h3>If the network is not working</h3>
+      <ul>
+        <li>Open Network Center → Overview to see whether a link is up and whether an IPv4 address has been assigned.</li>
+        <li>If the link is up but there is no IPv4 address, DHCP has not completed. Unplug and replug, or switch to a different network.</li>
+        <li>If DNS is failing but IPv4 works, set a public DNS server in the Network Center DNS tab and press <strong>Apply</strong>.</li>
+        <li>Check that Airplane Mode is off. Airplane Mode disables both wired and wireless traffic.</li>
+      </ul>
+
+      <h3>If the machine will not boot</h3>
+      <ul>
+        <li>Confirm the boot medium is set first in the firmware boot order.</li>
+        <li>If the ISO boots but SigeonOS freezes during the boot screen, try a machine with more RAM — the minimum is around 64&nbsp;MB, but a little more gives the framebuffer and filesystem more headroom.</li>
+        <li>If you added a persistent ATA disk and the machine will not boot, disconnect it and boot without it. SigeonOS will fall back to a RAM filesystem, and you can reattach the disk afterwards.</li>
+      </ul>
+
+      <h3>Getting help</h3>
+      <p>If you find a bug or need support, join the SigeonOS Discord at <strong>discord.gg/C6QfW357fw</strong> and post in <strong>#bug-reports</strong>. Include the error code and, where possible, a photo of the panic or alert screen.</p>
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  <div class="wrap">
+    <div class="foot-panel">
+      <span class="copyright">© 2026 SigeonOS — Manual for 09-Beta “Sigeon Feather”</span>
+      <ul class="foot-links">
+        <li><a href="#top">Top</a></li>
+        <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#shortcuts">Shortcuts</a></li>
+        <li><a href="https://github.com/sigionosdeveloper">GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Smooth-scroll offset for the sticky nav. */
+document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+        var id = link.getAttribute('href');
+        if (!id || id === '#') return;
+        var target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        var top = target.getBoundingClientRect().top + window.pageYOffset - 76;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+        history.replaceState(null, '', id);
+    });
+});
+</script>
+
+</body>
+</html>
